@@ -11,6 +11,8 @@ public class InputTouch : MonoBehaviour
     private Vector3 _changedPositionTouchLast, _changedPositionPreLast;
 
     private int fingersCount = 5;
+    private float offsetForY;
+    private float _distanceZoomGesture, _startDistanceZoomGesture;
 
     // Start is called before the first frame update
     void Start()
@@ -22,7 +24,7 @@ public class InputTouch : MonoBehaviour
     void Update()
     {
 
-        if (Input.touchCount > 0 && Input.touchCount <= fingersCount)
+        if (Input.touchCount == 1)
         {
             _touch = Input.GetTouch(0);
             if(_touch.phase == TouchPhase.Began)
@@ -31,8 +33,8 @@ public class InputTouch : MonoBehaviour
             }
             if(_touch.phase == TouchPhase.Stationary)
             {
-                _changedPositionPreLast = _changedPositionTouchLast;
-                _changedPositionTouchLast = Input.GetTouch(0).position;
+                _changedPositionPreLast = _changedPositionTouchLast;//записываем предыдущее значения кординат где остановился палец
+                _changedPositionTouchLast = Input.GetTouch(0).position;//записываем текущее
 
             }
             if (_changedPositionPreLast != Vector3.zero)
@@ -41,7 +43,8 @@ public class InputTouch : MonoBehaviour
             }
             if (_touch.phase == TouchPhase.Ended)
             {
-                if (_touch.position.y - _startPositionSwipeRight.y <= 150 && _touch.position.y - _startPositionSwipeRight.y >= -150 && _touch.position.x - _startPositionSwipeRight.x >= 100)
+                offsetForY = _touch.position.y - _startPositionSwipeRight.y;
+                if (offsetForY <= 50 && offsetForY >= -50 && _touch.position.x - _startPositionSwipeRight.x >= 100)
                 {
                     Debug.Log($"Свайп вправо.\n" +
                         $"Стартовая позиция {_startPositionSwipeRight}.\n" +
@@ -51,19 +54,47 @@ public class InputTouch : MonoBehaviour
                 }
 
             }
+           
+
+        }
+        else if( Input.touchCount > 1)
+        {
+            if (Input.touchCount > fingersCount)
+            {
+                fingersCount += fingersCount;
+                _touchArray = new Touch[fingersCount];
+            }
+
             for (int i = 0; i < Input.touchCount; i++)
             {
                 _touchArray[i] = Input.GetTouch(i);
-
-                //Debug.Log($"Палец #{i + 1}. Позиция {_touch[i].position}");
-
+                //Debug.Log($"Палец #{i + 1}. Позиция {_touchArray[i].position}");
             }
 
-        }
-        else if( Input.touchCount > fingersCount)
-        {
-            fingersCount += fingersCount;
-            _touchArray = new Touch[fingersCount];
+
+            if (_touchArray[0].phase == TouchPhase.Began && _touchArray[1].phase == TouchPhase.Began)
+            {
+                _startDistanceZoomGesture = Vector3.Distance(_touchArray[0].position, _touchArray[1].position);
+            }
+
+            if (_touchArray[0].phase == TouchPhase.Stationary && _touchArray[1].phase == TouchPhase.Stationary)//если остановили пальцы, обновляем позицию стартовой позиции для жеста увелечения
+            {
+                _startDistanceZoomGesture = Vector3.Distance(_touchArray[0].position, _touchArray[1].position);
+            }
+
+            if (_touchArray[0].phase == TouchPhase.Moved && _touchArray[1].phase == TouchPhase.Moved)
+            {
+                _distanceZoomGesture = Vector3.Distance(_touchArray[0].position, _touchArray[1].position);
+
+                if (_distanceZoomGesture > _startDistanceZoomGesture + (_startDistanceZoomGesture * 0.1f))
+                {
+                    Debug.Log($"Жест увелечения\n" +
+                        $"Растояние между пальцами - {_distanceZoomGesture}");
+                }
+            }
+          
+
+            
         }
 
         
