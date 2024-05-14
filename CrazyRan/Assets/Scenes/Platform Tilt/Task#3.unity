@@ -828,6 +828,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BackgroundAudioSource
       objectReference: {fileID: 0}
+    - target: {fileID: 5616709178329221229, guid: 5e3b1dd001e2e46439af14ea6fbfcda2, type: 3}
+      propertyPath: Loop
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e3b1dd001e2e46439af14ea6fbfcda2, type: 3}
 --- !u!82 &151337678 stripped
@@ -4002,6 +4006,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 194592143, guid: 8528de35dd0b1e449b32d7cc729ccf6d, type: 3}
+      propertyPath: _totalCoins
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 414199176, guid: 8528de35dd0b1e449b32d7cc729ccf6d, type: 3}
       propertyPath: m_IsActive
       value: 0
